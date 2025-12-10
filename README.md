@@ -44,15 +44,8 @@ Extensible Framework: Applicable to rate-dependent, asymmetric, and 3D constitut
 
 ## Citation
 If you use this code in your research, please cite:
-bibtex@article{ihuaenyi2025mechanics,
-  title={Mechanics informatics-driven topology optimization for test specimen design and single-test material characterization: A Gaussian random field approach},
-  author={Ihuaenyi, Royal C. and Zhu, Juner},
-  journal={Available at SSRN},
-  year={2025},
-  url={https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5800046}
-}
-
-Paper: Mechanics informatics-driven topology optimization for test specimen design and single-test material characterization: A Gaussian random field approach
+Paper: Mechanics informatics-driven topology optimization for test specimen design and single-test material characterization: A Gaussian random field approach 
+https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5800046
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
