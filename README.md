@@ -7,8 +7,12 @@ Key Achievement: Single uniaxial tension test replaces multiple conventional tes
 
 # Features
 Stress State Entropy Maximization: Quantitative metric ensuring specimens activate specific stress states required for accurate characterization
+
 Gaussian Random Field Topology Optimization: Karhunen-Loève expansion with eigenvalue-based design control
+
 Bayesian Optimization: Tree-structured Parzen Estimator for efficient design space exploration
+
 Physics-Informed Learning: Input Convex Neural Networks for constitutive law discovery
+
 Multi-Material Compatibility: Works with orthotropic elasticity and anisotropic plasticity
 
