@@ -1,0 +1,2 @@
+# Mechanics-informatics-driven-topology-optimization-via-Gaussian-random-fields
+Computational framework for designing optimally informative mechanical test specimens using Gaussian random fields and Bayesian optimization. Maximizes stress state entropy to enable single-test material characterization. Features: topology optimization via GRFs, ICNN-based constitutive learning, and automated FE integration.
