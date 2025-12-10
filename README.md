@@ -2,7 +2,7 @@
 Computational framework for designing optimally informative mechanical test specimens using Gaussian random fields and Bayesian optimization. Maximizes stress state entropy to enable single-test material characterization. Features: topology optimization via GRFs, ICNN-based constitutive learning, and automated FE integration.
 
 <p align="center">
-  <img src="images/Figure1.png" alt="Stress State Representation" width="800">
+  <img src="images/Figure1.pdf" alt="Stress State Representation" width="800">
 </p>
 
 ## Overview
