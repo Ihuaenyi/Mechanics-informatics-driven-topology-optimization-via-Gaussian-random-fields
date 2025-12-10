@@ -1,7 +1,7 @@
 # Mechanics-informatics-driven-topology-optimization-via-Gaussian-random-fields
 Computational framework for designing optimally informative mechanical test specimens using Gaussian random fields and Bayesian optimization. Maximizes stress state entropy to enable single-test material characterization. Features: topology optimization via GRFs, ICNN-based constitutive learning, and automated FE integration.
 
-# Overview
+## Overview
 Traditional material characterization requires multiple standardized tests, each targeting a distinct loading state. This framework reimagines material characterization as an information utilization problem. Instead of adapting specimen design to multiple simple tests, we design a single complex, informative specimen that maximizes stress state entropy - a quantitative measure of mechanical information content.
 Key Achievement: Single uniaxial tension test replaces multiple conventional tests, achieving order-of-magnitude improvement in parameter identification accuracy (from 21.47% to 1.02% average error) compared to low-information specimens.
 
@@ -16,7 +16,7 @@ Physics-Informed Learning: Input Convex Neural Networks for constitutive law dis
 
 Multi-Material Compatibility: Works with orthotropic elasticity and anisotropic plasticity
 
-# Requirements
+## Requirements
 Python 3.8+, ABAQUS 2020+ (or compatible FE solver), CUDA GPU (recommended)
 
 # Methodology
@@ -42,7 +42,7 @@ Orthotropic Linear Elasticity: Four independent elastic constants (C₁₁, C₂
 Anisotropic Plasticity: Hill48 yield criterion with six material constants (K, σ_y0, n, F, G, N)
 Extensible Framework: Applicable to rate-dependent, asymmetric, and 3D constitutive models
 
-Citation
+## Citation
 If you use this code in your research, please cite:
 bibtex@article{ihuaenyi2025mechanics,
   title={Mechanics informatics-driven topology optimization for test specimen design and single-test material characterization: A Gaussian random field approach},
@@ -51,14 +51,18 @@ bibtex@article{ihuaenyi2025mechanics,
   year={2025},
   url={https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5800046}
 }
-Paper: Mechanics informatics-driven topology optimization for test specimen design and single-test material characterization: A Gaussian random field approach
-Contributing
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-License
-This project is licensed under the MIT License - see the LICENSE file for details.
-Contact
 
-Royal C. Ihuaenyi - ihuaenyi.r@northeastern.edu
+Paper: Mechanics informatics-driven topology optimization for test specimen design and single-test material characterization: A Gaussian random field approach
+
+## Contributing
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+
+## Contact
+Royal C. Ihuaenyi - r.ihuaenyi@northeastern.edu
 Juner Zhu - j.zhu@northeastern.edu
 
 Department of Mechanical and Industrial Engineering
