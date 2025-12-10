@@ -61,5 +61,6 @@ Juner Zhu - j.zhu@northeastern.edu
 Department of Mechanical and Industrial Engineering
 Northeastern University
 Boston, MA 02115, USA
-Acknowledgments
+
+## Acknowledgments
 This research was supported by the U.S. National Science Foundation through grant CMMI-2450006.
