@@ -203,7 +203,6 @@ class KLExpansionSpecimenGenerator:
         Extract ABAQUS-compatible contours
         
         Parameters:
-        -----------
         min_area : float
             Minimum void area [mm²]
         max_points : int
@@ -261,16 +260,6 @@ class KLExpansionSpecimenGenerator:
             return self._extract_contours_alternative()
     
     def _process_contour_for_abaqus(self, contour, max_points):
-        """
-        Process individual contour for ABAQUS compatibility
-        
-        Key operations:
-        1. Ensure closed loop
-        2. Remove duplicate points
-        3. Ensure CCW orientation for voids
-        4. Limit point count
-        5. Smooth if needed
-        """
         if len(contour) < 3:
             return None
         
@@ -414,157 +403,6 @@ class KLExpansionSpecimenGenerator:
         
         return self.contours
     
-    def export_abaqus_script_2d_plane_stress(self, filename="kl_specimen_2d_abaqus.py"):
-        """
-        Export ABAQUS script for 2D plane stress elements (alternative approach)
-        """
-        if not hasattr(self, 'contours') or self.contours is None:
-            self.extract_contours()
-        
-        # Calculate void fraction
-        void_fraction = 1.0 - np.mean(self.phi[self.design_mask])
-        
-        script_lines = [
-            "# -*- coding: mbcs -*-",
-            "# KL Expansion Specimen - 2D Plane Stress Elements",
-            "# Auto-generated ABAQUS script",
-            "#",
-            "from abaqus import *",
-            "from abaqusConstants import *",
-            "from odbAccess import *",
-            "import regionToolset",
-            "",
-            f"# KL Specimen parameters",
-            f"W = {self.height}   # Height (Y direction)",
-            f"L = {self.width}  # Length (X direction)", 
-            f"# Void fraction: {void_fraction:.4f}",
-            "",
-            "## Sketch",
-            "s = mdb.models['Model-1'].ConstrainedSketch(name='__profile__', ",
-            "    sheetSize=200.0)",
-            "g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints",
-            "s.setPrimaryObject(option=STANDALONE)",
-            "",
-            "# Rectangle geometry",
-            "s.rectangle(point1=(0.0, 0.0), point2=(L, W))",
-            "print('Rectangle created')",
-            "",
-            "# 2D Planar part",
-            "p = mdb.models['Model-1'].Part(name='Part-1', dimensionality=TWO_D_PLANAR, ",
-            "    type=DEFORMABLE_BODY)",
-            "p = mdb.models['Model-1'].parts['Part-1']",
-            "p.BaseShell(sketch=s)",
-            "s.unsetPrimaryObject()",
-            "print('2D part created')",
-            "",
-            "# Isotropic Material (for testing)",
-            "mdb.models['Model-1'].Material(name='Material-1')",
-            "mdb.models['Model-1'].materials['Material-1'].Density(table=((1500.0, ), ))",
-            "mdb.models['Model-1'].materials['Material-1'].Elastic(table=((70000.0, 0.33), ))",
-            "",
-            "# Solid section for 2D",
-            "mdb.models['Model-1'].HomogeneousSolidSection(name='Section-1', ",
-            "    material='Material-1', thickness=1.0)",
-            "",
-            "# Section assignment",
-            "p = mdb.models['Model-1'].parts['Part-1']",
-            "f = p.faces",
-            "faces = f.getSequenceFromMask(mask=('[#1 ]', ), )",
-            "region = p.Set(faces=faces, name='Set-1')",
-            "p.SectionAssignment(region=region, sectionName='Section-1', offset=0.0, ",
-            "    offsetType=MIDDLE_SURFACE, offsetField='', ",
-            "    thicknessAssignment=FROM_SECTION)",
-            "",
-            "# Assembly",
-            "a = mdb.models['Model-1'].rootAssembly",
-            "a.DatumCsysByDefault(CARTESIAN)",
-            "p = mdb.models['Model-1'].parts['Part-1']",
-            "a.Instance(name='Part-1-1', part=p, dependent=ON)",
-            "",
-            "# Step",
-            "mdb.models['Model-1'].StaticStep(name='Step-1', previous='Initial')",
-            "",
-            "# Boundary conditions - Bottom edge fixed",
-            "try:",
-            "    a = mdb.models['Model-1'].rootAssembly",
-            "    e1 = a.instances['Part-1-1'].edges",
-            "    edges1 = e1.findAt(((L/2, 0.0, 0.0), ))",
-            "    region = a.Set(edges=[edges1], name='Set-Bottom')",
-            "    mdb.models['Model-1'].EncastreBC(name='BC-Bottom', createStepName='Step-1', ",
-            "        region=region, localCsys=None)",
-            "    print('Bottom BC applied')",
-            "except:",
-            "    print('Bottom BC failed')",
-            "",
-            "# Top edge displacement",
-            "try:",
-            "    a = mdb.models['Model-1'].rootAssembly",
-            "    e1 = a.instances['Part-1-1'].edges", 
-            "    edges1 = e1.findAt(((L/2, W, 0.0), ))",
-            "    region = a.Set(edges=[edges1], name='Set-Top')",
-            "    mdb.models['Model-1'].DisplacementBC(name='BC-Top', createStepName='Step-1', ",
-            "        region=region, u1=0.0, u2=0.05, ur3=UNSET, ",
-            "        amplitude=UNSET, fixed=OFF, distributionType=UNIFORM, fieldName='', ",
-            "        localCsys=None)",
-            "    print('Top BC applied')",
-            "except:",
-            "    print('Top BC failed')",
-            "",
-            "# Mesh",
-            "p = mdb.models['Model-1'].parts['Part-1']",
-            "elemType1 = mesh.ElemType(elemCode=CPS4R, elemLibrary=STANDARD, ",
-            "    secondOrderAccuracy=OFF, distortionControl=DEFAULT)",
-            "elemType2 = mesh.ElemType(elemCode=CPS3, elemLibrary=STANDARD)",
-            "f = p.faces",
-            "faces = f.getSequenceFromMask(mask=('[#1 ]', ), )",
-            "pickedRegions =(faces, )",
-            "p.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2))",
-            "p.seedPart(size=1.0, deviationFactor=0.1, minSizeFactor=0.1)",
-            "p.generateMesh()",
-            "print('Mesh generated')",
-            "",
-            "# Regenerate assembly",
-            "a1 = mdb.models['Model-1'].rootAssembly",
-            "a1.regenerate()",
-            "",
-            "# Job",
-            "print('Creating job...')",
-            "mdb.Job(name='Job-1', model='Model-1', description='', type=ANALYSIS, ",
-            "    atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90, ",
-            "    memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True, ",
-            "    explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF, ",
-            "    modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine='', ",
-            "    scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=1, ",
-            "    numDomains=1, numGPUs=0)",
-            "",
-            "print('Submitting job...')",
-            "mdb.jobs['Job-1'].submit(consistencyChecking=OFF)",
-            "mdb.jobs['Job-1'].waitForCompletion()",
-            "print('Job completed')",
-            "",
-            "# Post-processing",
-            "try:",
-            "    odb = openOdb(path='Job-1.odb')",
-            "    step = odb.steps['Step-1']",
-            "    frame = step.frames[-1]",
-            "    stress = frame.fieldOutputs['S']",
-            "    stressValues = stress.values",
-            "    ",
-            "    with open('stress.txt', 'w') as f:",
-            "        for v in stressValues:",
-            "            f.write('%.4e, %.4e, %.4e, %.4e \\n' % ",
-            "                    (v.data[0], v.data[1], v.data[2], v.data[3]))",
-            "    print('Stress data extracted successfully')",
-            "    odb.close()",
-            "except Exception as e:",
-            "    print('Post-processing failed: %s' % str(e))"
-        ]
-        
-        # Write file
-        with open(filename, 'w') as f:
-            f.write('\n'.join(script_lines))
-        
-        return filename
 
     def export_abaqus_script(self, filename="kl_specimen_abaqus.py"):
         """
@@ -579,7 +417,6 @@ class KLExpansionSpecimenGenerator:
         script_lines = [
             "# -*- coding: mbcs -*-",
             "# KL Expansion Specimen - 2D Plane Stress Anisotropic Lamina",
-            "# Based on working 3D template, converted to 2D",
             "#",
             "from abaqus import *",
             "from abaqusConstants import *",
@@ -954,7 +791,6 @@ def create_kl_specimen(eigenvalues, target_void_fraction=0.25,
         Grid resolution
     
     Returns:
-    --------
     KLExpansionSpecimenGenerator
         Generator object with all results
     """
