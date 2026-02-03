@@ -94,10 +94,10 @@ def load_real_data_only(strain_file='strain5.txt', stress_file='stress5.txt'):
         return strain_tensor, stress_tensor
         
     except FileNotFoundError as e:
-        print(f"  ❌ ERROR: {e}")
+        print(f" ERROR: {e}")
         return None, None
     except Exception as e:
-        print(f"  ❌ UNEXPECTED ERROR: {e}")
+        print(f"  UNEXPECTED ERROR: {e}")
         return None, None
 
 # =============================================================================
@@ -105,7 +105,6 @@ def load_real_data_only(strain_file='strain5.txt', stress_file='stress5.txt'):
 # =============================================================================
 
 class PhysicsConstrainedICNN(nn.Module):
-    """Physics-constrained ICNN with enhanced positive definiteness constraints"""
     
     def __init__(self, hidden_dims=[32, 16], seed=42):
         super().__init__()
@@ -117,7 +116,6 @@ class PhysicsConstrainedICNN(nn.Module):
         self.seed = seed
         
         set_all_seeds(seed)
-        #"Ground Truth": {"C11": 181.20, "C22": 253.50, "C12": 88.80, "C66": 46.00}
         # Learnable orthotropic elastic constants with strong positive constraints
         # Use log parameterization to enforce strict positivity
         self.log_C11 = nn.Parameter(torch.log(torch.tensor(35.0)))
@@ -144,9 +142,9 @@ class PhysicsConstrainedICNN(nn.Module):
         
         self._initialize_weights()
         
-        print(f"  🏗️ Architecture: Input(3) -> {hidden_dims} -> Output(1)")
-        print(f"  📏 Working directly with physical units")
-        print(f"  ⚖️ Enhanced positive definiteness constraints for stiffness")
+        print(f"  Architecture: Input(3) -> {hidden_dims} -> Output(1)")
+        print(f"   Working directly with physical units")
+        print(f"   Enhanced positive definiteness constraints for stiffness")
         print("✅ STEP 3 COMPLETE: Physics-constrained ICNN created")
     
     def _initialize_weights(self):
@@ -275,9 +273,9 @@ class EnhancedPhysicsTrainer:
         self.val_losses = []
         self.epochs_logged = []
         
-        print(f"  ⚖️ Enhanced constraint weights: {self.weights}")
-        print(f"  📏 Strong positive definiteness enforcement")
-        print("✅ STEP 4 SETUP COMPLETE: Enhanced physics trainer ready")
+        print(f"  Enhanced constraint weights: {self.weights}")
+        print(f"  Strong positive definiteness enforcement")
+        print("STEP 4 SETUP COMPLETE: Enhanced physics trainer ready")
     
     def _compute_losses(self, strain, stress_pred, stress_true):
         """Enhanced loss computation with strong positive definiteness"""
@@ -365,9 +363,9 @@ class EnhancedPhysicsTrainer:
     
     def train(self, train_loader, val_loader, epochs=300, lr=1e-4):
         """Training with enhanced positive definiteness monitoring"""
-        print(f"\n  🎯 Starting ENHANCED training for {epochs} epochs...")
-        print("  🔬 Strong positive definiteness constraints enforced")
-        print("  📊 Target: Prevent negative stiffness constants")
+        print(f"\n  Starting ENHANCED training for {epochs} epochs...")
+        print("  Strong positive definiteness constraints enforced")
+        print("  Target: Prevent negative stiffness constants")
         
         best_val_loss = float('inf')
         best_model_state = None
@@ -441,22 +439,22 @@ class EnhancedPhysicsTrainer:
         
         final_val_loss, final_rmse, final_stiffness = self._validate_with_details(val_loader)
         
-        print(f"  🏁 TRAINING COMPLETE: Final validation loss {final_val_loss:.10f}")
-        print(f"  📊 Physical RMSE: {final_rmse:.6f} MPa")
-        print(f"  ⚖️ Final stiffness: C11={final_stiffness['C11']:.2f}, C12={final_stiffness['C12']:.2f}, "
+        print(f"  TRAINING COMPLETE: Final validation loss {final_val_loss:.10f}")
+        print(f"  Physical RMSE: {final_rmse:.6f} MPa")
+        print(f"  Final stiffness: C11={final_stiffness['C11']:.2f}, C12={final_stiffness['C12']:.2f}, "
               f"C22={final_stiffness['C22']:.2f}, C66={final_stiffness['C66']:.2f}")
-        print(f"  ✅ Positive definite: {'Yes' if final_stiffness['det'] > 0 else 'No'} (det={final_stiffness['det']:.4f})")
+        print(f"  Positive definite: {'Yes' if final_stiffness['det'] > 0 else 'No'} (det={final_stiffness['det']:.4f})")
         
         if final_val_loss < 1e-6:
-            print("  🎉 OUTSTANDING: Excellent results with positive definite stiffness!")
+            print("  OUTSTANDING: Excellent results with positive definite stiffness!")
         elif final_val_loss < 1e-4:
-            print("  🎉 EXCELLENT: Good results with enhanced constraints!")
+            print("   EXCELLENT: Good results with enhanced constraints!")
         elif final_val_loss < 1e-2:
-            print("  ✅ GOOD: Positive definiteness constraints working")
+            print("  GOOD: Positive definiteness constraints working")
         else:
-            print("  ⚠️ MODERATE: May need constraint adjustment")
+            print("   MODERATE: May need constraint adjustment")
         
-        print("✅ STEP 4 COMPLETE: Enhanced positive definiteness training finished")
+        print("STEP 4 COMPLETE: Enhanced positive definiteness training finished")
         return final_val_loss
     
     def plot_training_curves(self):
@@ -521,9 +519,9 @@ def extract_constants_from_real_data(model, real_strain, real_stress):
     strain_np = real_strain.detach().cpu().numpy()
     stress_np = real_stress.detach().cpu().numpy()
     
-    print(f"  📊 Extracting from {len(strain_np)} real data points")
-    print(f"  📈 Strain range: [{strain_np.min():.6f}, {strain_np.max():.6f}]")
-    print(f"  📈 Stress range: [{stress_np.min():.6f}, {stress_np.max():.6f}] MPa")
+    print(f"  Extracting from {len(strain_np)} real data points")
+    print(f"  Strain range: [{strain_np.min():.6f}, {strain_np.max():.6f}]")
+    print(f"  Stress range: [{stress_np.min():.6f}, {stress_np.max():.6f}] MPa")
     
     try:
         reg_s11 = LinearRegression()
@@ -550,26 +548,26 @@ def extract_constants_from_real_data(model, real_strain, real_stress):
         constants = {'C11': C11, 'C12': C12, 'C22': C22, 'C66': C66}
         r2_scores = {'R2_s11': r2_s11, 'R2_s22': r2_s22, 'R2_s12': r2_s12}
         
-        print(f"  📊 Extracted constants:")
+        print(f"  Extracted constants:")
         print(f"    C₁₁ = {C11:.4f} MPa")
         print(f"    C₁₂ = {C12:.4f} MPa") 
         print(f"    C₂₂ = {C22:.4f} MPa")
         print(f"    C₆₆ = {C66:.4f} MPa")
         
-        print(f"  📊 R² scores:")
+        print(f"  R² scores:")
         print(f"    σ₁₁: {r2_s11:.4f}")
         print(f"    σ₂₂: {r2_s22:.4f}")
         print(f"    σ₁₂: {r2_s12:.4f}")
         
         det = C11 * C22 - C12**2
         is_pd = C11 > 0 and C22 > 0 and C66 > 0 and det > 0
-        print(f"  ✅ Positive definite: {'Yes' if is_pd else 'No'} (det = {det:.4f})")
+        print(f"  Positive definite: {'Yes' if is_pd else 'No'} (det = {det:.4f})")
         
-        print("✅ STEP 5 COMPLETE: Constants extracted from real data")
+        print("STEP 5 COMPLETE: Constants extracted from real data")
         return constants, r2_scores
         
     except Exception as e:
-        print(f"  ❌ ERROR in extraction: {e}")
+        print(f"  ERROR in extraction: {e}")
         return None, None
 
 # =============================================================================
@@ -588,7 +586,7 @@ def ultra_precise_icnn_workflow_no_norm(strain_file='strain_max.txt', stress_fil
     if strain_data is None:
         return None
     
-    print(f"\n  ⚠️ NO NORMALIZATION APPLIED - Data kept in physical units")
+    print(f"\n  NO NORMALIZATION APPLIED - Data kept in physical units")
     print(f"    Strain range: [{strain_data.min():.6f}, {strain_data.max():.6f}]")
     print(f"    Stress range: [{stress_data.min():.6f}, {stress_data.max():.6f}] MPa")
     
@@ -608,7 +606,7 @@ def ultra_precise_icnn_workflow_no_norm(strain_file='strain_max.txt', stress_fil
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
-    print(f"  📊 Data splits: Train={len(train_dataset)}, Val={len(val_dataset)}, Test={len(test_dataset)}")
+    print(f"  Data splits: Train={len(train_dataset)}, Val={len(val_dataset)}, Test={len(test_dataset)}")
     
     # Step 3 & 4: Create and train enhanced model
     model = PhysicsConstrainedICNN(hidden_dims=[32, 16], seed=seed)
@@ -616,7 +614,7 @@ def ultra_precise_icnn_workflow_no_norm(strain_file='strain_max.txt', stress_fil
     best_val_loss = trainer.train(train_loader, val_loader, epochs=300, lr=1e-4)
     
     # Create training plots
-    print("\n📊 Creating enhanced physics training plots...")
+    print("\n Creating enhanced physics training plots...")
     trainer.plot_training_curves()
     
     # Step 5: Extract constants and compare
@@ -628,13 +626,13 @@ def ultra_precise_icnn_workflow_no_norm(strain_file='strain_max.txt', stress_fil
     print("="*60)
     
     # Extract from ground truth
-    print("\n🔍 Method 1: Direct extraction from TRUE STRESS")
+    print("\n Method 1: Direct extraction from TRUE STRESS")
     true_constants, true_r2 = extract_constants_from_real_data(
         model, train_strain_physical, train_stress_physical
     )
     
     # Extract from ICNN predictions
-    print("\n🔍 Method 2: Extraction from ENHANCED ICNN")
+    print("\n Method 2: Extraction from ENHANCED ICNN")
     model.eval()
     
     icnn_stress_list = []
@@ -664,7 +662,7 @@ def ultra_precise_icnn_workflow_no_norm(strain_file='strain_max.txt', stress_fil
     
     avg_error = float('inf')
     if true_constants and icnn_constants:
-        print("📊 Constants Comparison:")
+        print(" Constants Comparison:")
         print(f"  {'Parameter':<8} {'True Data':<12} {'ICNN Pred':<12} {'Error (%)':<12}")
         print(f"  {'-'*8} {'-'*12} {'-'*12} {'-'*12}")
         
@@ -686,16 +684,16 @@ def ultra_precise_icnn_workflow_no_norm(strain_file='strain_max.txt', stress_fil
         
         if valid_params > 0:
             avg_error = total_error / valid_params
-            print(f"\n  📈 Average Error: {avg_error:.2f}%")
+            print(f"\n  Average Error: {avg_error:.2f}%")
             
             if avg_error < 1:
-                print("  🎉 OUTSTANDING: Enhanced constraints achieved excellent results!")
+                print("   OUTSTANDING: Enhanced constraints achieved excellent results!")
             elif avg_error < 5:
-                print("  🎉 EXCELLENT: Strong positive definiteness worked!")
+                print("  EXCELLENT: Strong positive definiteness worked!")
             elif avg_error < 15:
-                print("  ✅ GOOD: Enhanced constraints effective") 
+                print("   GOOD: Enhanced constraints effective") 
             else:
-                print("  ⚠️ MODERATE: May need further constraint refinement")
+                print("   MODERATE: May need further constraint refinement")
     
     # Final model stiffness check
     final_C11, final_C12, final_C22, final_C66 = model._get_stiffness_params()
@@ -707,7 +705,7 @@ def ultra_precise_icnn_workflow_no_norm(strain_file='strain_max.txt', stress_fil
     print(f"     C22 = {final_C22.item():.4f} MPa")
     print(f"     C66 = {final_C66.item():.4f} MPa")
     print(f"     Determinant = {final_det.item():.4f}")
-    print(f"     Positive Definite: {'✅ YES' if final_det.item() > 0 else '❌ NO'}")
+    print(f"     Positive Definite: {' YES' if final_det.item() > 0 else ' NO'}")
     
     # Test evaluation
     print("\n" + "="*60)
@@ -731,20 +729,20 @@ def ultra_precise_icnn_workflow_no_norm(strain_file='strain_max.txt', stress_fil
             continue
     
     final_test_mse = test_mse / max(test_samples, 1)
-    print(f"📊 Final Test Performance:")
+    print(f" Final Test Performance:")
     print(f"  Test MSE: {final_test_mse:.10f}")
     print(f"  Test RMSE: {np.sqrt(final_test_mse):.6f} MPa")
     print(f"  Validation Loss: {best_val_loss:.10f}")
     
     # Final assessment
     if best_val_loss < 1e-6 and final_det.item() > 0:
-        print(f"\n🎉 OUTSTANDING: Excellent loss with guaranteed positive definite stiffness!")
+        print(f"\n OUTSTANDING: Excellent loss with guaranteed positive definite stiffness!")
     elif best_val_loss < 1e-4 and final_det.item() > 0:
-        print(f"\n🎉 EXCELLENT: Good results with positive definite constraints!")
+        print(f"\n EXCELLENT: Good results with positive definite constraints!")
     elif final_det.item() > 0:
-        print(f"\n✅ GOOD: Successfully prevented negative stiffness constants")
+        print(f"\n GOOD: Successfully prevented negative stiffness constants")
     else:
-        print(f"\n⚠️ WARNING: Positive definiteness may need stronger enforcement")
+        print(f"\n WARNING: Positive definiteness may need stronger enforcement")
     
     
     return {
@@ -766,5 +764,5 @@ def ultra_precise_icnn_workflow_no_norm(strain_file='strain_max.txt', stress_fil
 # READY TO RUN - ENHANCED POSITIVE DEFINITENESS VERSION
 # =============================================================================
 
-print("🚀 Usage:")
+print(" Usage:")
 print("results = ultra_precise_icnn_workflow_no_norm('strain_max.txt', 'stress_max.txt', seed=42)")
